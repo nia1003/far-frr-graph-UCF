@@ -42,15 +42,15 @@ def main() -> None:
         for arch, color in [("cascade", C_CASCADE), ("parallel (parallel run)", C_PAR),
                             ("parallel (sequential run)", C_SEQ)]:
             e = d[d.architecture == arch]
-            ax.step(e.latency_ms, e.min_far_plus_frr, where="post", color=color, label=arch)
+            ax.step(e.latency_ms / 1000.0, e.min_far_plus_frr, where="post", color=color, label=arch)
         ax.set_xscale("log")
-        ax.set_xticks([100, 150, 200, 300, 500, 1000, 2000, 3000])
+        ax.set_xticks([0.1, 0.15, 0.2, 0.3, 0.5, 1, 2, 3])
         ax.xaxis.set_major_formatter(ScalarFormatter())
         ax.xaxis.set_minor_formatter(NullFormatter())
         ax.set_title(s, fontsize=10)
-        ax.set_xlim(d.latency_ms.min() * 0.9, d.latency_ms.max() * 1.1)
+        ax.set_xlim(d.latency_ms.min() / 1000 * 0.9, d.latency_ms.max() / 1000 * 1.1)
         ax.tick_params(axis="x", labelsize=7)
-        ax.set_xlabel("mean latency per video (ms)")
+        ax.set_xlabel("mean latency per video (s)")
         ax.grid(alpha=0.3)
     axes[0].set_ylabel("min FAR + FRR")
     axes[0].legend(fontsize=8)
