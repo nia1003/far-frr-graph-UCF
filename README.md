@@ -1,13 +1,15 @@
 # FAR-FRR Graph for UCF and Xception
 
-# Project Files
-所有結果皆在 `results/` 資料夾中。
-
+# 最新進度說明
+[progress_report.md](progress_report.md)
 
 # 真假分數
 本專題設定
 - 分數 0 為 **真**
 - 分數 1 為 **假**
+
+## Project Files
+- 所有結果皆在 `results/20/` 中
 
 # Average Inference Time
 ## UCF
@@ -53,3 +55,17 @@
 |DFDC               |0.483      |0.352867   |0.349892   |
 |FaceForensics      |0.707      |0.062500   |0.057143   |
 |Combined           |0.496      |0.313165   |0.31523    |
+
+
+# EER 點
+[results/min_eer_entries](results/min_eer_entries.csv)
+
+
+# Exhaustive Search for Accuracy-Oriented and Latency-Oriented Selection
+| 分類 | 選取標準 |
+| :--- | :--- |
+| **Accuracy-Oriented** | FAR Limit 之下，FRR 最低的 Permutation 與其 Threshold 組合 |
+| **Latency-Oriented** | FAR Limit 之下，推論時間最短的 Permutation 與其 Threshold 組合 |
+
+## 流程
+![Flow](./img/FAR-FRR_tradeoff.drawio.png)

@@ -1,0 +1,182 @@
+test_set,objective,limit,method,config,far,frr,far_plus_frr,latency_ms,latency_sequential_ms,detectors_used,reach_stage2,reach_stage3
+FaceForensics++,O1,,cascade (5% grid),"xception>ucf>sbi | xception:L=0.60,H=0.90; ucf:L=0.75,H=0.85; sbi:T=0.30",0.05,0,0.05,152.932,152.932,xception+ucf+sbi,73,10
+FaceForensics++,O1,,parallel (1% grid),"a_xception=0.570, b_ucf=0.430, sbi=0.000, gamma=0.740",0.0339286,0.0142857,0.0482143,224.81,339.51,xception+ucf,,
+FaceForensics++,O1,,parallel (refine +-10%),"a_xception=0.556, b_ucf=0.444, sbi=0.000, gamma=0.738",0.0339286,0.0142857,0.0482143,224.81,339.51,xception+ucf,,
+FaceForensics++,O1,,parallel (refine +-20%),"a_xception=0.562, b_ucf=0.438, sbi=0.000, gamma=0.740",0.0339286,0.0142857,0.0482143,224.81,339.51,xception+ucf,,
+FaceForensics++,O1,,"parallel (MILP, proven optimal)","a_xception=0.5500, b_ucf=0.4400, sbi=0.0100, gamma=0.7370",0.0339286,0.0142857,0.0482143,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.01,cascade (5% grid),"xception>ucf>sbi | xception:L=0.35,H=0.85; ucf:L=0.05,H=0.30; sbi:T=0.50",0.00892857,0.128571,0.1375,177.489,177.489,xception+ucf+sbi,85,24
+FaceForensics++,O2,0.01,parallel (1% grid),"a_xception=0.000, b_ucf=1.000, sbi=0.000, gamma=0.280",0.00892857,0.214286,0.223214,224.81,224.81,ucf,,
+FaceForensics++,O2,0.01,parallel (refine +-10%),"a_xception=0.000, b_ucf=1.000, sbi=0.000, gamma=0.274",0.00892857,0.214286,0.223214,224.81,224.81,ucf,,
+FaceForensics++,O2,0.01,parallel (refine +-20%),"a_xception=0.000, b_ucf=1.000, sbi=0.000, gamma=0.276",0.00892857,0.214286,0.223214,224.81,224.81,ucf,,
+FaceForensics++,O2,0.05,cascade (5% grid),"xception>ucf>sbi | xception:L=0.60,H=0.90; ucf:L=0.75,H=0.85; sbi:T=0.30",0.05,0,0.05,152.932,152.932,xception+ucf+sbi,73,10
+FaceForensics++,O2,0.05,parallel (1% grid),"a_xception=0.130, b_ucf=0.770, sbi=0.100, gamma=0.720",0.05,0.00714286,0.0571429,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.05,parallel (refine +-10%),"a_xception=0.144, b_ucf=0.780, sbi=0.076, gamma=0.732",0.0482143,0.00714286,0.0553571,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.05,parallel (refine +-20%),"a_xception=0.114, b_ucf=0.774, sbi=0.112, gamma=0.716",0.05,0.00714286,0.0571429,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.1,cascade (5% grid),"xception>ucf>sbi | xception:L=0.60,H=0.90; ucf:L=0.75,H=0.85; sbi:T=0.30",0.05,0,0.05,152.932,152.932,xception+ucf+sbi,73,10
+FaceForensics++,O2,0.1,parallel (1% grid),"a_xception=0.570, b_ucf=0.330, sbi=0.100, gamma=0.770",0.0553571,0,0.0553571,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.1,parallel (refine +-10%),"a_xception=0.562, b_ucf=0.332, sbi=0.106, gamma=0.766",0.0553571,0,0.0553571,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.1,parallel (refine +-20%),"a_xception=0.570, b_ucf=0.330, sbi=0.100, gamma=0.770",0.0553571,0,0.0553571,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.2,cascade (5% grid),"xception>ucf>sbi | xception:L=0.60,H=0.90; ucf:L=0.75,H=0.85; sbi:T=0.30",0.05,0,0.05,152.932,152.932,xception+ucf+sbi,73,10
+FaceForensics++,O2,0.2,parallel (1% grid),"a_xception=0.570, b_ucf=0.330, sbi=0.100, gamma=0.770",0.0553571,0,0.0553571,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.2,parallel (refine +-10%),"a_xception=0.562, b_ucf=0.332, sbi=0.106, gamma=0.766",0.0553571,0,0.0553571,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O2,0.2,parallel (refine +-20%),"a_xception=0.570, b_ucf=0.330, sbi=0.100, gamma=0.770",0.0553571,0,0.0553571,1035.13,1374.64,xception+ucf+sbi,,
+FaceForensics++,O3,0.05,cascade (5% grid),"xception>ucf | xception:L=0.75,H=0.80; ucf:T=0.75",0.0446429,0.05,0.0946429,119.517,119.517,xception+ucf,15,0
+FaceForensics++,O3,0.05,parallel (1% grid),"a_xception=0.570, b_ucf=0.430, sbi=0.000, gamma=0.740",0.0339286,0.0142857,0.0482143,224.81,339.51,xception+ucf,,
+FaceForensics++,O3,0.05,parallel (refine +-10%),"a_xception=0.556, b_ucf=0.444, sbi=0.000, gamma=0.738",0.0339286,0.0142857,0.0482143,224.81,339.51,xception+ucf,,
+FaceForensics++,O3,0.05,parallel (refine +-20%),"a_xception=0.562, b_ucf=0.438, sbi=0.000, gamma=0.740",0.0339286,0.0142857,0.0482143,224.81,339.51,xception+ucf,,
+FaceForensics++,O3,0.1,cascade (5% grid),xception | xception:T=0.85,0.0857143,0.0142857,0.1,114.7,114.7,xception,0,0
+FaceForensics++,O3,0.1,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.1,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.878",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.1,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.2,cascade (5% grid),xception | xception:T=0.85,0.0857143,0.0142857,0.1,114.7,114.7,xception,0,0
+FaceForensics++,O3,0.2,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.2,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.878",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.2,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.3,cascade (5% grid),xception | xception:T=0.85,0.0857143,0.0142857,0.1,114.7,114.7,xception,0,0
+FaceForensics++,O3,0.3,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.3,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.878",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.3,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.4,cascade (5% grid),xception | xception:T=0.85,0.0857143,0.0142857,0.1,114.7,114.7,xception,0,0
+FaceForensics++,O3,0.4,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.4,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.878",0.0928571,0,0.0928571,114.7,114.7,xception,,
+FaceForensics++,O3,0.4,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.880",0.0928571,0,0.0928571,114.7,114.7,xception,,
+Celeb-DF-v2,O1,,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.15,H=0.55; sbi:L=0.30,H=0.70; xception:T=0.55",0.15,0.185393,0.335393,1234.4,1234.4,ucf+sbi+xception,201,95
+Celeb-DF-v2,O1,,parallel (1% grid),"a_xception=0.090, b_ucf=0.410, sbi=0.500, gamma=0.500",0.208824,0.146067,0.354891,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O1,,parallel (refine +-10%),"a_xception=0.050, b_ucf=0.452, sbi=0.498, gamma=0.494",0.208824,0.146067,0.354891,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O1,,parallel (refine +-20%),"a_xception=0.090, b_ucf=0.410, sbi=0.500, gamma=0.500",0.208824,0.146067,0.354891,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O1,,"parallel (MILP, proven optimal)","a_xception=0.0923, b_ucf=0.4079, sbi=0.4998, gamma=0.4999",0.205882,0.146067,0.35195,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.01,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.05,H=0.15; sbi:L=0.20,H=0.60; xception:T=0.35",0.00882353,0.595506,0.604329,537.382,537.382,ucf+sbi+xception,70,29
+Celeb-DF-v2,O2,0.01,parallel (1% grid),"a_xception=0.580, b_ucf=0.010, sbi=0.410, gamma=0.340",0.00882353,0.623596,0.632419,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.01,parallel (refine +-10%),"a_xception=0.584, b_ucf=0.020, sbi=0.396, gamma=0.340",0.00882353,0.61236,0.621183,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.01,parallel (refine +-20%),"a_xception=0.588, b_ucf=0.018, sbi=0.394, gamma=0.340",0.00882353,0.61236,0.621183,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.05,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.05,H=0.50; sbi:L=0.30,H=0.70; xception:T=0.35",0.0470588,0.393258,0.440317,1523.45,1523.45,ucf+sbi+xception,256,111
+Celeb-DF-v2,O2,0.05,parallel (1% grid),"a_xception=0.450, b_ucf=0.000, sbi=0.550, gamma=0.430",0.05,0.432584,0.482584,2676.15,2834.94,xception+sbi,,
+Celeb-DF-v2,O2,0.05,parallel (refine +-10%),"a_xception=0.442, b_ucf=0.006, sbi=0.552, gamma=0.428",0.05,0.432584,0.482584,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.05,parallel (refine +-20%),"a_xception=0.450, b_ucf=0.000, sbi=0.550, gamma=0.430",0.05,0.432584,0.482584,2676.15,2834.94,xception+sbi,,
+Celeb-DF-v2,O2,0.1,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.05,H=0.55; sbi:L=0.30,H=0.65; xception:T=0.55",0.1,0.247191,0.347191,1600.03,1600.03,ucf+sbi+xception,271,108
+Celeb-DF-v2,O2,0.1,parallel (1% grid),"a_xception=0.060, b_ucf=0.470, sbi=0.470, gamma=0.390",0.0970588,0.303371,0.40043,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.1,parallel (refine +-10%),"a_xception=0.062, b_ucf=0.482, sbi=0.456, gamma=0.390",0.1,0.292135,0.392135,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.1,parallel (refine +-20%),"a_xception=0.064, b_ucf=0.482, sbi=0.454, gamma=0.390",0.1,0.292135,0.392135,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.2,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.15,H=0.85; sbi:L=0.35,H=0.70; xception:T=0.55",0.188235,0.151685,0.339921,1882.69,1882.69,ucf+sbi+xception,325,120
+Celeb-DF-v2,O2,0.2,parallel (1% grid),"a_xception=0.250, b_ucf=0.230, sbi=0.520, gamma=0.530",0.194118,0.168539,0.362657,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.2,parallel (refine +-10%),"a_xception=0.244, b_ucf=0.246, sbi=0.510, gamma=0.526",0.197059,0.162921,0.35998,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O2,0.2,parallel (refine +-20%),"a_xception=0.254, b_ucf=0.234, sbi=0.512, gamma=0.530",0.197059,0.162921,0.35998,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O3,0.05,cascade (5% grid),infeasible,,,,,,,,
+Celeb-DF-v2,O3,0.05,parallel,infeasible,,,,,,,,
+Celeb-DF-v2,O3,0.1,cascade (5% grid),infeasible,,,,,,,,
+Celeb-DF-v2,O3,0.1,parallel,infeasible,,,,,,,,
+Celeb-DF-v2,O3,0.2,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.20,H=0.45; sbi:L=0.45,H=0.60; xception:T=0.60",0.197059,0.196629,0.393688,845.828,845.828,ucf+sbi+xception,130,24
+Celeb-DF-v2,O3,0.2,parallel (1% grid),"a_xception=0.050, b_ucf=0.510, sbi=0.440, gamma=0.450",0.182353,0.179775,0.362128,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O3,0.2,parallel (refine +-10%),"a_xception=0.066, b_ucf=0.512, sbi=0.422, gamma=0.444",0.176471,0.185393,0.361864,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O3,0.2,parallel (refine +-20%),"a_xception=0.070, b_ucf=0.506, sbi=0.424, gamma=0.446",0.176471,0.185393,0.361864,2676.15,3001.79,xception+ucf+sbi,,
+Celeb-DF-v2,O3,0.3,cascade (5% grid),xception | xception:T=0.55,0.211765,0.269663,0.481428,158.79,158.79,xception,0,0
+Celeb-DF-v2,O3,0.3,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.550",0.211765,0.269663,0.481428,158.79,158.79,xception,,
+Celeb-DF-v2,O3,0.3,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.548",0.211765,0.269663,0.481428,158.79,158.79,xception,,
+Celeb-DF-v2,O3,0.3,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.550",0.211765,0.269663,0.481428,158.79,158.79,xception,,
+Celeb-DF-v2,O3,0.4,cascade (5% grid),xception | xception:T=0.55,0.211765,0.269663,0.481428,158.79,158.79,xception,0,0
+Celeb-DF-v2,O3,0.4,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.550",0.211765,0.269663,0.481428,158.79,158.79,xception,,
+Celeb-DF-v2,O3,0.4,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.548",0.211765,0.269663,0.481428,158.79,158.79,xception,,
+Celeb-DF-v2,O3,0.4,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.550",0.211765,0.269663,0.481428,158.79,158.79,xception,,
+DFDC,O1,,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.25,H=1.00; sbi:L=0.05,H=0.20; xception:T=0.50",0.347844,0.234557,0.582402,431.968,431.968,ucf+sbi+xception,3092,926
+DFDC,O1,,parallel (1% grid),"a_xception=0.050, b_ucf=0.270, sbi=0.680, gamma=0.280",0.350356,0.243629,0.593984,365.5,642.53,xception+ucf+sbi,,
+DFDC,O1,,parallel (refine +-10%),"a_xception=0.146, b_ucf=0.178, sbi=0.676, gamma=0.310",0.395563,0.196976,0.592539,365.5,642.53,xception+ucf+sbi,,
+DFDC,O1,,parallel (refine +-20%),"a_xception=0.062, b_ucf=0.322, sbi=0.616, gamma=0.308",0.35789,0.234989,0.59288,365.5,642.53,xception+ucf+sbi,,
+DFDC,O1,,"parallel (MILP, gap=7.17%)","a_xception=0.1500, b_ucf=0.1800, sbi=0.6700, gamma=0.3122",0.395144,0.196976,0.592121,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.01,cascade (5% grid),"sbi>xception>ucf | sbi:L=0.00,H=0.35; xception:L=0.05,H=0.10; ucf:T=0.05",0.00962746,0.87905,0.888677,451.614,451.614,sbi+xception+ucf,3492,200
+DFDC,O2,0.01,parallel (1% grid),"a_xception=0.600, b_ucf=0.300, sbi=0.100, gamma=0.070",0.00962746,0.877754,0.887381,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.01,parallel (refine +-10%),"a_xception=0.668, b_ucf=0.272, sbi=0.060, gamma=0.072",0.00962746,0.876458,0.886085,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.01,parallel (refine +-20%),"a_xception=0.600, b_ucf=0.316, sbi=0.084, gamma=0.070",0.00962746,0.87689,0.886517,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.05,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.00,H=0.20; sbi:L=0.05,H=0.60; xception:T=0.10",0.0498116,0.737797,0.787609,296.105,296.105,ucf+sbi+xception,1385,783
+DFDC,O2,0.05,parallel (1% grid),"a_xception=0.170, b_ucf=0.600, sbi=0.230, gamma=0.110",0.0498116,0.728726,0.778537,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.05,parallel (refine +-10%),"a_xception=0.170, b_ucf=0.608, sbi=0.222, gamma=0.110",0.0498116,0.726998,0.776809,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.05,parallel (refine +-20%),"a_xception=0.170, b_ucf=0.608, sbi=0.222, gamma=0.110",0.0498116,0.726998,0.776809,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.1,cascade (5% grid),"ucf>xception>sbi | ucf:L=0.05,H=0.30; xception:L=0.15,H=0.45; sbi:T=0.10",0.0996233,0.585745,0.685368,254.791,254.791,ucf+xception+sbi,1221,726
+DFDC,O2,0.1,parallel (1% grid),"a_xception=0.170, b_ucf=0.530, sbi=0.300, gamma=0.180",0.0996233,0.586609,0.686232,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.1,parallel (refine +-10%),"a_xception=0.168, b_ucf=0.436, sbi=0.396, gamma=0.176",0.0996233,0.584449,0.684073,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.1,parallel (refine +-20%),"a_xception=0.170, b_ucf=0.434, sbi=0.396, gamma=0.176",0.0996233,0.584449,0.684073,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.2,cascade (5% grid),"xception>ucf>sbi | xception:L=0.15,H=0.90; ucf:L=0.20,H=0.35; sbi:T=0.20",0.198828,0.415551,0.614379,281.169,281.169,xception+ucf+sbi,3609,565
+DFDC,O2,0.2,parallel (1% grid),"a_xception=0.260, b_ucf=0.290, sbi=0.450, gamma=0.270",0.199665,0.406479,0.606145,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.2,parallel (refine +-10%),"a_xception=0.172, b_ucf=0.370, sbi=0.458, gamma=0.260",0.199247,0.405184,0.60443,365.5,642.53,xception+ucf+sbi,,
+DFDC,O2,0.2,parallel (refine +-20%),"a_xception=0.112, b_ucf=0.422, sbi=0.466, gamma=0.254",0.199665,0.402592,0.602257,365.5,642.53,xception+ucf+sbi,,
+DFDC,O3,0.05,cascade (5% grid),infeasible,,,,,,,,
+DFDC,O3,0.05,parallel,infeasible,,,,,,,,
+DFDC,O3,0.1,cascade (5% grid),infeasible,,,,,,,,
+DFDC,O3,0.1,parallel,infeasible,,,,,,,,
+DFDC,O3,0.2,cascade (5% grid),infeasible,,,,,,,,
+DFDC,O3,0.2,parallel,infeasible,,,,,,,,
+DFDC,O3,0.3,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.30,H=0.80; sbi:L=0.05,H=0.10; xception:T=0.45",0.29594,0.29676,0.5927,318.71,318.71,ucf+sbi+xception,1816,301
+DFDC,O3,0.3,parallel,infeasible,,,,,,,,
+DFDC,O3,0.4,cascade (5% grid),xception | xception:T=0.50,0.367099,0.295896,0.662996,106.22,106.22,xception,0,0
+DFDC,O3,0.4,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.460",0.27501,0.385313,0.660324,106.22,106.22,xception,,
+DFDC,O3,0.4,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.468",0.284638,0.374514,0.659152,106.22,106.22,xception,,
+DFDC,O3,0.4,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.468",0.284638,0.374514,0.659152,106.22,106.22,xception,,
+balanced_pooled,O1,,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.25,H=0.95; sbi:L=0.05,H=0.20; xception:T=0.45",0.283327,0.271933,0.55526,476.324,476.324,ucf+sbi+xception,2734,847
+balanced_pooled,O1,,parallel (1% grid),"a_xception=0.200, b_ucf=0.240, sbi=0.560, gamma=0.370",0.374098,0.192556,0.566654,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O1,,parallel (refine +-10%),"a_xception=0.230, b_ucf=0.200, sbi=0.570, gamma=0.374",0.380555,0.184201,0.564755,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O1,,parallel (refine +-20%),"a_xception=0.236, b_ucf=0.192, sbi=0.572, gamma=0.374",0.381694,0.183061,0.564755,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.01,cascade (5% grid),"xception>ucf>sbi | xception:L=0.05,H=0.10; ucf:L=0.00,H=0.05; sbi:T=0.40",0.00987467,0.878845,0.88872,133.021,133.021,xception+ucf+sbi,242,153
+balanced_pooled,O2,0.01,parallel (1% grid),"a_xception=0.590, b_ucf=0.340, sbi=0.070, gamma=0.070",0.00987467,0.877326,0.887201,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.01,parallel (refine +-10%),"a_xception=0.608, b_ucf=0.322, sbi=0.070, gamma=0.072",0.00987467,0.876187,0.886062,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.01,parallel (refine +-20%),"a_xception=0.582, b_ucf=0.348, sbi=0.070, gamma=0.070",0.00987467,0.876946,0.886821,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.05,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.05,H=0.10; sbi:L=0.05,H=0.10; xception:T=0.40",0.0497531,0.709837,0.75959,218.558,218.558,ucf+sbi+xception,369,79
+balanced_pooled,O2,0.05,parallel (1% grid),"a_xception=0.210, b_ucf=0.590, sbi=0.200, gamma=0.120",0.0497531,0.713255,0.763008,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.05,parallel (refine +-10%),"a_xception=0.188, b_ucf=0.622, sbi=0.190, gamma=0.118",0.0497531,0.709457,0.75921,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.05,parallel (refine +-20%),"a_xception=0.170, b_ucf=0.610, sbi=0.220, gamma=0.116",0.0493733,0.710216,0.75959,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.1,cascade (5% grid),"ucf>xception>sbi | ucf:L=0.10,H=0.35; xception:L=0.05,H=0.40; sbi:T=0.10",0.0998861,0.5564,0.656286,265.053,265.053,ucf+xception+sbi,1203,701
+balanced_pooled,O2,0.1,parallel (1% grid),"a_xception=0.200, b_ucf=0.510, sbi=0.290, gamma=0.200",0.0998861,0.557919,0.657805,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.1,parallel (refine +-10%),"a_xception=0.206, b_ucf=0.512, sbi=0.282, gamma=0.202",0.0998861,0.556779,0.656665,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.1,parallel (refine +-20%),"a_xception=0.196, b_ucf=0.522, sbi=0.282, gamma=0.200",0.0998861,0.557919,0.657805,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.2,cascade (5% grid),"ucf>xception>sbi | ucf:L=0.25,H=0.95; xception:L=0.15,H=0.45; sbi:T=0.10",0.199392,0.383593,0.582985,282.505,282.505,ucf+xception+sbi,2734,601
+balanced_pooled,O2,0.2,parallel (1% grid),"a_xception=0.230, b_ucf=0.450, sbi=0.320, gamma=0.310",0.199772,0.381314,0.581086,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.2,parallel (refine +-10%),"a_xception=0.188, b_ucf=0.494, sbi=0.318, gamma=0.308",0.199772,0.379415,0.579187,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O2,0.2,parallel (refine +-20%),"a_xception=0.246, b_ucf=0.442, sbi=0.312, gamma=0.314",0.199772,0.380555,0.580327,557.313,840.951,xception+ucf+sbi,,
+balanced_pooled,O3,0.05,cascade (5% grid),infeasible,,,,,,,,
+balanced_pooled,O3,0.05,parallel,infeasible,,,,,,,,
+balanced_pooled,O3,0.1,cascade (5% grid),infeasible,,,,,,,,
+balanced_pooled,O3,0.1,parallel,infeasible,,,,,,,,
+balanced_pooled,O3,0.2,cascade (5% grid),infeasible,,,,,,,,
+balanced_pooled,O3,0.2,parallel,infeasible,,,,,,,,
+balanced_pooled,O3,0.3,cascade (5% grid),"ucf>xception>sbi | ucf:L=0.40,H=0.45; xception:L=0.50,H=0.75; sbi:T=0.20",0.299658,0.299278,0.598937,189.167,189.167,ucf+xception+sbi,223,76
+balanced_pooled,O3,0.3,parallel (1% grid),"a_xception=0.450, b_ucf=0.550, sbi=0.000, gamma=0.470",0.299278,0.29662,0.595898,173.414,283.638,xception+ucf,,
+balanced_pooled,O3,0.3,parallel (refine +-10%),"a_xception=0.452, b_ucf=0.548, sbi=0.000, gamma=0.468",0.29624,0.299278,0.595518,173.414,283.638,xception+ucf,,
+balanced_pooled,O3,0.3,parallel (refine +-20%),"a_xception=0.450, b_ucf=0.550, sbi=0.000, gamma=0.470",0.299278,0.29662,0.595898,173.414,283.638,xception+ucf,,
+balanced_pooled,O3,0.4,cascade (5% grid),xception | xception:T=0.50,0.338017,0.29548,0.633498,110.225,110.225,xception,0,0
+balanced_pooled,O3,0.4,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.510",0.347133,0.283707,0.630839,110.225,110.225,xception,,
+balanced_pooled,O3,0.4,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.506",0.342955,0.287885,0.630839,110.225,110.225,xception,,
+balanced_pooled,O3,0.4,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.506",0.342955,0.287885,0.630839,110.225,110.225,xception,,
+balanced_equal_source,O1,,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.10,H=0.90; sbi:L=0.30,H=0.70; xception:T=0.55",0.22619,0.109524,0.335714,984.197,984.197,ucf+sbi+xception,437,138
+balanced_equal_source,O1,,parallel (1% grid),"a_xception=0.320, b_ucf=0.300, sbi=0.380, gamma=0.470",0.192857,0.161905,0.354762,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O1,,parallel (refine +-10%),"a_xception=0.334, b_ucf=0.292, sbi=0.374, gamma=0.472",0.190476,0.161905,0.352381,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O1,,parallel (refine +-20%),"a_xception=0.328, b_ucf=0.296, sbi=0.376, gamma=0.470",0.190476,0.164286,0.354762,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.01,cascade (5% grid),"xception>sbi>ucf | xception:L=0.00,H=0.25; sbi:L=0.05,H=0.10; ucf:T=0.25",0.00952381,0.764286,0.77381,336.215,336.215,xception+sbi+ucf,163,23
+balanced_equal_source,O2,0.01,parallel (1% grid),"a_xception=0.320, b_ucf=0.040, sbi=0.640, gamma=0.090",0.00952381,0.8,0.809524,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.01,parallel (refine +-10%),"a_xception=0.320, b_ucf=0.050, sbi=0.630, gamma=0.092",0.00952381,0.792857,0.802381,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.01,parallel (refine +-20%),"a_xception=0.328, b_ucf=0.044, sbi=0.628, gamma=0.094",0.00952381,0.792857,0.802381,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.05,cascade (5% grid),"sbi>ucf>xception | sbi:L=0.00,H=0.70; ucf:L=0.10,H=0.35; xception:T=0.30",0.05,0.483333,0.533333,1523.34,1523.34,sbi+ucf+xception,640,141
+balanced_equal_source,O2,0.05,parallel (1% grid),"a_xception=0.070, b_ucf=0.790, sbi=0.140, gamma=0.170",0.05,0.488095,0.538095,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.05,parallel (refine +-10%),"a_xception=0.062, b_ucf=0.792, sbi=0.146, gamma=0.170",0.05,0.485714,0.535714,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.05,parallel (refine +-20%),"a_xception=0.062, b_ucf=0.794, sbi=0.144, gamma=0.170",0.05,0.485714,0.535714,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.1,cascade (5% grid),"xception>sbi>ucf | xception:L=0.20,H=0.65; sbi:L=0.10,H=0.70; ucf:T=0.20",0.1,0.328571,0.428571,794.724,794.724,xception+sbi+ucf,353,198
+balanced_equal_source,O2,0.1,parallel (1% grid),"a_xception=0.310, b_ucf=0.450, sbi=0.240, gamma=0.350",0.1,0.330952,0.430952,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.1,parallel (refine +-10%),"a_xception=0.332, b_ucf=0.444, sbi=0.224, gamma=0.358",0.1,0.32619,0.42619,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.1,parallel (refine +-20%),"a_xception=0.318, b_ucf=0.442, sbi=0.240, gamma=0.354",0.1,0.328571,0.428571,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.2,cascade (5% grid),"ucf>sbi>xception | ucf:L=0.15,H=0.75; sbi:L=0.25,H=0.70; xception:T=0.55",0.2,0.145238,0.345238,762.811,762.811,ucf+sbi+xception,315,122
+balanced_equal_source,O2,0.2,parallel (1% grid),"a_xception=0.350, b_ucf=0.290, sbi=0.360, gamma=0.480",0.2,0.159524,0.359524,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.2,parallel (refine +-10%),"a_xception=0.336, b_ucf=0.304, sbi=0.360, gamma=0.478",0.197619,0.157143,0.354762,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O2,0.2,parallel (refine +-20%),"a_xception=0.318, b_ucf=0.306, sbi=0.376, gamma=0.472",0.2,0.159524,0.359524,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O3,0.05,cascade (5% grid),infeasible,,,,,,,,
+balanced_equal_source,O3,0.05,parallel,infeasible,,,,,,,,
+balanced_equal_source,O3,0.1,cascade (5% grid),infeasible,,,,,,,,
+balanced_equal_source,O3,0.1,parallel,infeasible,,,,,,,,
+balanced_equal_source,O3,0.2,cascade (5% grid),"xception>ucf>sbi | xception:L=0.45,H=0.60; ucf:L=0.50,H=0.60; sbi:T=0.15",0.2,0.2,0.4,177.939,177.939,xception+ucf+sbi,136,20
+balanced_equal_source,O3,0.2,parallel (1% grid),"a_xception=0.320, b_ucf=0.300, sbi=0.380, gamma=0.470",0.192857,0.161905,0.354762,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O3,0.2,parallel (refine +-10%),"a_xception=0.334, b_ucf=0.292, sbi=0.374, gamma=0.472",0.190476,0.161905,0.352381,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O3,0.2,parallel (refine +-20%),"a_xception=0.328, b_ucf=0.296, sbi=0.376, gamma=0.470",0.190476,0.164286,0.354762,1358.93,1672.99,xception+ucf+sbi,,
+balanced_equal_source,O3,0.3,cascade (5% grid),xception | xception:T=0.55,0.197619,0.22619,0.42381,126.57,126.57,xception,0,0
+balanced_equal_source,O3,0.3,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.570",0.211905,0.207143,0.419048,126.57,126.57,xception,,
+balanced_equal_source,O3,0.3,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.562",0.204762,0.214286,0.419048,126.57,126.57,xception,,
+balanced_equal_source,O3,0.3,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.562",0.204762,0.214286,0.419048,126.57,126.57,xception,,
+balanced_equal_source,O3,0.4,cascade (5% grid),xception | xception:T=0.55,0.197619,0.22619,0.42381,126.57,126.57,xception,0,0
+balanced_equal_source,O3,0.4,parallel (1% grid),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.570",0.211905,0.207143,0.419048,126.57,126.57,xception,,
+balanced_equal_source,O3,0.4,parallel (refine +-10%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.562",0.204762,0.214286,0.419048,126.57,126.57,xception,,
+balanced_equal_source,O3,0.4,parallel (refine +-20%),"a_xception=1.000, b_ucf=0.000, sbi=0.000, gamma=0.562",0.204762,0.214286,0.419048,126.57,126.57,xception,,

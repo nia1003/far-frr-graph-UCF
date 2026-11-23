@@ -1,0 +1,13 @@
+set,source,n_real,n_fake
+original,FaceForensics++,140,560
+original,Celeb-DF-v2,178,340
+original,DFDC,2315,2389
+original,TOTAL,2633,3289
+balanced_pooled,FaceForensics++,140,140
+balanced_pooled,Celeb-DF-v2,178,178
+balanced_pooled,DFDC,2315,2315
+balanced_pooled,TOTAL,2633,2633
+balanced_equal_source,FaceForensics++,140,140
+balanced_equal_source,Celeb-DF-v2,140,140
+balanced_equal_source,DFDC,140,140
+balanced_equal_source,TOTAL,420,420
