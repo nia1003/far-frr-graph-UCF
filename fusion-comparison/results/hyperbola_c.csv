@@ -1,0 +1,10 @@
+dataset,detector,eer,eer_squared,C_empirical_max_far_x_frr,C_used_by_GP_(all_datasets_max),mean_hyperbola_slack_on_frr
+FaceForensics++,xception,0.05,0.0025,0.00352041,0.171,0.174003
+FaceForensics++,ucf,0.0357143,0.00127551,0.00280612,0.137,0.0949709
+FaceForensics++,sbi,0.2,0.04,0.042449,0.324,0.0569978
+Celeb-DF-v2,xception,0.247125,0.0610707,0.069002,0.171,0.0679607
+Celeb-DF-v2,ucf,0.287376,0.082585,0.0849471,0.137,0.106855
+Celeb-DF-v2,sbi,0.247125,0.0610707,0.0770159,0.324,0.107939
+DFDC,xception,0.333302,0.11109,0.111817,0.171,0.0908645
+DFDC,ucf,0.31675,0.10033,0.100889,0.137,0.0682037
+DFDC,sbi,0.335239,0.112385,0.115013,0.324,0.0961142

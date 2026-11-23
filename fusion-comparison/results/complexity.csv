@@ -1,0 +1,7 @@
+m_detectors,cascade_decision_variables,cascade_configs_5pct,parallel_decision_variables,parallel_configs_1pct,parallel_exact_beta_weight_points_1pct,ratio_cascade_over_parallel
+1,1,21,1,101,1,0.207921
+2,3,9702,2,10201,101,0.951083
+3,5,6723486,3,520251,5151,12.9235
+4,7,6212501064,4,17861951,176851,347.806
+5,9,7175438728920,5,464410726,4598126,15450.6
+6,11,9945158078283120,6,9752625246,96560646,1.01974e+06

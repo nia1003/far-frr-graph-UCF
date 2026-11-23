@@ -8,8 +8,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+import time
+
+import highspy
 import numpy as np
-from scipy.optimize import Bounds, LinearConstraint, milp
 from scipy.sparse import coo_matrix
 
 
@@ -20,6 +22,16 @@ REQUIRED_COLUMNS = {
     "xception_fake_score",
     "ucf_fake_score",
     "sbi_fake_score",
+}
+
+
+HIGHS_TO_SCIPY_STATUS = {
+    "Optimal": 0,
+    "Time limit reached": 1,
+    "Iteration limit reached": 1,
+    "Solution limit reached": 1,
+    "Infeasible": 2,
+    "Unbounded": 3,
 }
 
 
@@ -81,6 +93,9 @@ class FusionResult:
     termination_reason: str
     solution_source: str
     grid_start_objective: float | None
+    dominance_cut_count: int = 0
+    tight_big_m: bool = False
+    solve_seconds: float | None = None
 
 
 def _termination_reason(status: int, message: str) -> str:
@@ -209,16 +224,38 @@ def _stable_threshold(
     return (lower + upper) / 2.0
 
 
+def per_sample_big_m(scores: np.ndarray, epsilon: float) -> tuple[np.ndarray, np.ndarray]:
+    """Tightest valid Big-M values per sample when beta is in [0, 1].
+
+    Because the weights lie on the simplex, q_j is always inside
+    [min_k s_jk, max_k s_jk].  Therefore
+      Real row  (e_j = 0 must not bind q_j >= beta - M1): M1_j = 1 - min_k s_jk
+      Fake row  (e_j = 1 must not bind q_j <= beta - eps + M2 + eps): M2_j = max_k s_jk
+    Both are <= 1, the previous global M.
+    """
+    lower_m = 1.0 - scores.min(axis=1)
+    upper_m = scores.max(axis=1)
+    return lower_m, upper_m
+
+
 def _build_indicator_constraints(
     scores: np.ndarray,
     epsilon: float,
+    *,
+    big_m: tuple[np.ndarray, np.ndarray] | None = None,
 ) -> tuple[coo_matrix, np.ndarray, np.ndarray]:
     """Build strict Big-M rows for e_j = 1 iff q_j >= beta.
 
     Variable order is alpha_X, alpha_U, alpha_S, beta, e_1, ..., e_N,
-    followed by one fixed objective-offset variable.
+    followed by one fixed objective-offset variable.  ``big_m`` optionally
+    provides per-sample (M1, M2); the default is the global M = 1.
     """
     sample_count = scores.shape[0]
+    if big_m is None:
+        lower_m = np.ones(sample_count)
+        upper_m = np.ones(sample_count)
+    else:
+        lower_m, upper_m = big_m
     variable_count = 5 + sample_count
     constraint_count = 1 + 2 * sample_count
     row_indices: list[int] = [0, 0, 0]
@@ -229,29 +266,28 @@ def _build_indicator_constraints(
     constraint_lower[0] = 1.0
     constraint_upper[0] = 1.0
 
-    big_m = 1.0
     for sample_index, detector_scores in enumerate(scores):
         prediction_column = 4 + sample_index
         lower_row = 1 + 2 * sample_index
         upper_row = lower_row + 1
+        m1 = float(lower_m[sample_index])
+        m2 = float(upper_m[sample_index])
 
         for detector_column, score in enumerate(detector_scores):
             row_indices.extend((lower_row, upper_row))
             column_indices.extend((detector_column, detector_column))
             values.extend((float(score), float(score)))
 
-        # q_j - beta >= -M(1 - e_j)
-        # q_j - beta - M*e_j >= -M
+        # q_j - beta >= -M1(1 - e_j)  ->  q_j - beta - M1*e_j >= -M1
         row_indices.extend((lower_row, lower_row))
         column_indices.extend((3, prediction_column))
-        values.extend((-1.0, -big_m))
-        constraint_lower[lower_row] = -big_m
+        values.extend((-1.0, -m1))
+        constraint_lower[lower_row] = -m1
 
-        # q_j - beta <= -epsilon + (M + epsilon)*e_j
-        # q_j - beta - (M + epsilon)*e_j <= -epsilon
+        # q_j - beta <= -epsilon + (M2 + epsilon)*e_j
         row_indices.extend((upper_row, upper_row))
         column_indices.extend((3, prediction_column))
-        values.extend((-1.0, -(big_m + epsilon)))
+        values.extend((-1.0, -(m2 + epsilon)))
         constraint_upper[upper_row] = -epsilon
 
     matrix = coo_matrix(
@@ -259,6 +295,87 @@ def _build_indicator_constraints(
         shape=(constraint_count, variable_count),
     ).tocsr()
     return matrix, constraint_lower, constraint_upper
+
+
+def dominance_pairs(scores: np.ndarray) -> np.ndarray:
+    """Return (a, b) pairs with s_a >= s_b componentwise (transitively reduced).
+
+    With non-negative weights q_a >= q_b, so e_b = 1 implies e_a = 1.  Only the
+    transitive reduction is returned: if a >= c >= b, the pair (a, b) is
+    implied by (a, c) and (c, b) and is dropped.  Identical score vectors are
+    ordered by index so that they form a chain instead of a 2-cycle.
+    """
+    n = scores.shape[0]
+    geq = (scores[:, None, :] >= scores[None, :, :]).all(axis=-1)
+    equal = (scores[:, None, :] == scores[None, :, :]).all(axis=-1)
+    # For identical vectors keep only a < b to avoid cycles.
+    upper = np.triu(np.ones((n, n), dtype=bool), k=1)
+    dominates = geq & (~equal | upper)
+    np.fill_diagonal(dominates, False)
+    as_float = dominates.astype(np.float32)
+    implied = (as_float @ as_float) > 0
+    reduced = dominates & ~implied
+    a, b = np.nonzero(reduced)
+    return np.column_stack((a, b))
+
+
+def exact_beta_grid_seed(
+    samples: list[FusionSample],
+    *,
+    step: float = 0.01,
+    epsilon: float = 1e-6,
+) -> "FusionSeed":
+    """Grid over the weight simplex with the exact best threshold per weight.
+
+    For a fixed weight vector the best threshold is found by sorting the
+    fused scores, so beta has no quantization error.  Only cuts whose gap is
+    at least ``epsilon`` are considered so the seed satisfies the MILP's
+    strict rule.
+    """
+    labels = np.fromiter((sample.label for sample in samples), dtype=np.int8)
+    scores = np.array(
+        [(s.xception_score, s.ucf_score, s.sbi_score) for s in samples], dtype=float
+    )
+    n_real = int(np.count_nonzero(labels == 0))
+    n_fake = int(np.count_nonzero(labels == 1))
+    intervals = int(round(1.0 / step))
+    best: tuple[float, float, np.ndarray, float] | None = None
+    for i in range(intervals + 1):
+        for j in range(intervals + 1 - i):
+            weights = np.array([i, j, intervals - i - j], dtype=float) / intervals
+            fused = scores @ weights
+            order = np.argsort(fused, kind="stable")
+            sorted_q = fused[order]
+            sorted_y = labels[order]
+            # Cut k: the first k sorted samples are Real, the rest Fake.
+            missed_fake = np.concatenate(([0], np.cumsum(sorted_y == 1))) / n_fake
+            flagged_real = (
+                n_real - np.concatenate(([0], np.cumsum(sorted_y == 0)))
+            ) / n_real
+            valid = np.ones(len(fused) + 1, dtype=bool)
+            valid[1:-1] = sorted_q[1:] - sorted_q[:-1] >= epsilon * 4
+            objective = np.where(valid, missed_fake + flagged_real, np.inf)
+            k = int(np.argmin(objective))
+            balance = abs(missed_fake[k] - flagged_real[k])
+            candidate = (float(objective[k]), balance)
+            if best is None or candidate < (best[0], best[1]):
+                if k == 0:
+                    beta = 0.0
+                elif k == len(fused):
+                    beta = 1.0
+                else:
+                    beta = float(sorted_q[k])
+                best = (candidate[0], candidate[1], weights, beta)
+    assert best is not None
+    _, _, weights, beta = best
+    return build_fusion_seed(
+        samples,
+        alpha_xception=float(weights[0]),
+        alpha_ucf=float(weights[1]),
+        alpha_sbi=float(weights[2]),
+        beta=beta,
+        epsilon=epsilon,
+    )
 
 
 def build_fusion_seed(
@@ -351,8 +468,20 @@ def solve_parallel_fusion(
     mip_rel_gap: float | None = None,
     display_solver_log: bool = False,
     grid_seed: FusionSeed | None = None,
+    tight_big_m: bool = True,
+    dominance_cuts: bool = True,
+    threads: int | None = None,
+    random_seed: int = 0,
 ) -> FusionResult:
-    """Solve the parallel-fusion MILP for one dataset."""
+    """Solve the parallel-fusion MILP for one dataset with HiGHS (highspy).
+
+    Improvements over the original scipy formulation:
+      * ``grid_seed`` is passed to HiGHS as a real MIP start (setSolution),
+        instead of an objective-cutoff row.
+      * ``tight_big_m`` uses per-sample Big-M values (see per_sample_big_m).
+      * ``dominance_cuts`` adds e_a >= e_b for every transitively reduced
+        dominance pair (see dominance_pairs).
+    """
     if not samples:
         raise ValueError("At least one sample is required")
     if not 0.0 < epsilon < 1.0:
@@ -391,9 +520,8 @@ def solve_parallel_fusion(
         )
 
     # Variable order: alpha_X, alpha_U, alpha_S, beta, e_1, ..., e_N, followed
-    # by a fixed-one variable that represents the constant term in FRR. The
-    # fixed variable keeps the solver objective and reported MIP gap equal to
-    # FAR + FRR instead of a constant-shifted objective.
+    # by a fixed-one variable that carries the constant term of FRR, so the
+    # solver objective and reported MIP gap equal FAR + FRR.
     prediction_start = 4
     objective_offset_index = prediction_start + sample_count
     variable_count = objective_offset_index + 1
@@ -408,82 +536,141 @@ def solve_parallel_fusion(
     lower_bounds = np.zeros(variable_count, dtype=float)
     upper_bounds = np.ones(variable_count, dtype=float)
     lower_bounds[objective_offset_index] = 1.0
-    integrality = np.zeros(variable_count, dtype=np.uint8)
-    integrality[prediction_start:objective_offset_index] = 1
 
+    big_m = per_sample_big_m(scores, epsilon) if tight_big_m else None
     matrix, constraint_lower, constraint_upper = _build_indicator_constraints(
-        scores, epsilon
+        scores, epsilon, big_m=big_m
     )
-    constraints: list[LinearConstraint] = [
-        LinearConstraint(matrix, constraint_lower, constraint_upper)
-    ]
-    if grid_seed is not None:
-        # scipy.optimize.milp has no x0/MIP-start API. This objective cutoff is
-        # the strongest safe use of the known incumbent through this backend:
-        # the solver searches only solutions at least as good as the grid point.
-        cutoff_tolerance = 1e-12
-        constraints.append(
-            LinearConstraint(
-                objective_coefficients.reshape(1, -1),
-                -np.inf,
-                grid_seed.objective + cutoff_tolerance,
-            )
-        )
 
+    pairs = dominance_pairs(scores) if dominance_cuts else np.empty((0, 2), int)
+
+    highs = highspy.Highs()
+    highs.setOptionValue("output_flag", bool(display_solver_log))
     # HiGHS' default MIP feasibility tolerance is too close to epsilon=1e-6
-    # and can numerically reintroduce the boundary ambiguity. Keep it at least
-    # two orders of magnitude smaller than epsilon.
+    # and can numerically reintroduce the boundary ambiguity.
     feasibility_tolerance = max(1e-10, min(1e-8, epsilon / 100.0))
-    options: dict[str, Any] = {
-        "disp": display_solver_log,
-        "mip_feasibility_tolerance": feasibility_tolerance,
-        "primal_feasibility_tolerance": feasibility_tolerance,
-    }
+    highs.setOptionValue("mip_feasibility_tolerance", feasibility_tolerance)
+    highs.setOptionValue("primal_feasibility_tolerance", feasibility_tolerance)
+    highs.setOptionValue("random_seed", int(random_seed))
+    if threads is not None:
+        highs.setOptionValue("threads", int(threads))
     if time_limit is not None:
-        options["time_limit"] = time_limit
+        highs.setOptionValue("time_limit", float(time_limit))
     if mip_rel_gap is not None:
-        options["mip_rel_gap"] = mip_rel_gap
+        highs.setOptionValue("mip_rel_gap", float(mip_rel_gap))
 
-    with warnings.catch_warnings():
-        # SciPy forwards these supported HiGHS options but warns because they
-        # are not part of scipy.optimize.milp's short public option list.
-        warnings.filterwarnings(
-            "ignore",
-            message="Unrecognized options detected:.*",
-            category=RuntimeWarning,
-        )
-        solution = milp(
-            c=objective_coefficients,
-            integrality=integrality,
-            bounds=Bounds(lower_bounds, upper_bounds),
-            constraints=constraints,
-            options=options,
-        )
-    if solution.x is None and grid_seed is None:
-        raise MilpSolveError(
-            f"MILP failed for {dataset}: status={solution.status}, "
-            f"message={solution.message}"
+    highs.addVars(variable_count, lower_bounds, upper_bounds)
+    highs.changeColsCost(
+        variable_count, np.arange(variable_count, dtype=np.int32), objective_coefficients
+    )
+    integer_columns = np.arange(prediction_start, objective_offset_index, dtype=np.int32)
+    highs.changeColsIntegrality(
+        len(integer_columns),
+        integer_columns,
+        np.full(len(integer_columns), highspy.HighsVarType.kInteger),
+    )
+    csr = matrix.tocsr()
+    highs.addRows(
+        csr.shape[0],
+        constraint_lower,
+        constraint_upper,
+        csr.nnz,
+        csr.indptr[:-1].astype(np.int32),
+        csr.indices.astype(np.int32),
+        csr.data,
+    )
+    if len(pairs):
+        # e_a - e_b >= 0
+        pair_count = len(pairs)
+        starts = np.arange(0, 2 * pair_count, 2, dtype=np.int32)
+        indices = np.empty(2 * pair_count, dtype=np.int32)
+        indices[0::2] = prediction_start + pairs[:, 0]
+        indices[1::2] = prediction_start + pairs[:, 1]
+        values = np.tile([1.0, -1.0], pair_count)
+        highs.addRows(
+            pair_count,
+            np.zeros(pair_count),
+            np.full(pair_count, highspy.kHighsInf),
+            2 * pair_count,
+            starts,
+            indices,
+            values,
         )
 
-    raw_gap = getattr(solution, "mip_gap", None)
-    raw_node_count = getattr(solution, "mip_node_count", None)
-    raw_best_bound = getattr(solution, "mip_dual_bound", None)
-    best_bound = (
-        None
-        if raw_best_bound is None or not np.isfinite(raw_best_bound)
-        else float(raw_best_bound)
-    )
-    termination_reason = _termination_reason(
-        int(solution.status), str(solution.message)
-    )
-    if solution.x is None:
-        fallback_gap = None
-        if best_bound is not None:
-            fallback_gap = max(
-                0.0,
-                (grid_seed.objective - best_bound)
-                / max(abs(grid_seed.objective), 1e-12),
+    if grid_seed is not None:
+        start = np.zeros(variable_count, dtype=float)
+        start[:3] = (grid_seed.alpha_xception, grid_seed.alpha_ucf, grid_seed.alpha_sbi)
+        start[3] = grid_seed.beta
+        start[prediction_start:objective_offset_index] = grid_seed.predictions
+        start[objective_offset_index] = 1.0
+        solution_start = highspy.HighsSolution()
+        solution_start.col_value = start.tolist()
+        solution_start.value_valid = True
+        highs.setSolution(solution_start)
+
+    started = time.perf_counter()
+    highs.run()
+    solve_seconds = time.perf_counter() - started
+
+    model_status = highs.getModelStatus()
+    message = highs.modelStatusToString(model_status)
+    status = HIGHS_TO_SCIPY_STATUS.get(message, 4)
+    info = highs.getInfo()
+    has_solution = info.primal_solution_status == 2
+    best_bound = float(info.mip_dual_bound)
+    best_bound = best_bound if np.isfinite(best_bound) else None
+    node_count = int(info.mip_node_count)
+    termination_reason = _termination_reason(status, message)
+
+    if not has_solution:
+        if grid_seed is None:
+            raise MilpSolveError(
+                f"MILP failed for {dataset}: status={status}, message={message}"
             )
+        solution_x = None
+    else:
+        solution_x = np.asarray(highs.getSolution().col_value, dtype=float)
+
+    extra = dict(
+        dominance_cut_count=int(len(pairs)),
+        tight_big_m=bool(tight_big_m),
+        solve_seconds=solve_seconds,
+    )
+
+    candidate = None
+    if solution_x is not None:
+        weights = solution_x[:3].copy()
+        raw_predictions = solution_x[prediction_start:objective_offset_index]
+        predictions = np.rint(raw_predictions).astype(np.int8)
+        if np.max(np.abs(raw_predictions - predictions)) > 1e-5:
+            raise MilpSolveError("The MILP returned non-integral prediction variables")
+        if abs(float(weights.sum()) - 1.0) > 1e-6:
+            raise MilpSolveError(f"Detector weights do not sum to 1: {weights}")
+        fusion_scores = scores @ weights
+        beta = _stable_threshold(fusion_scores, predictions, epsilon)
+        threshold_predictions = (fusion_scores >= beta).astype(np.int8)
+        if not np.array_equal(predictions, threshold_predictions):
+            mismatch_count = int(np.count_nonzero(predictions != threshold_predictions))
+            raise MilpSolveError(
+                f"MILP predictions disagree with q >= beta for {mismatch_count} samples"
+            )
+        false_accepts = int(np.count_nonzero((labels == 0) & (predictions == 1)))
+        false_rejections = int(np.count_nonzero((labels == 1) & (predictions == 0)))
+        candidate = (weights, beta, predictions, fusion_scores,
+                     false_accepts, false_rejections)
+
+    use_seed = candidate is None or (
+        grid_seed is not None
+        and grid_seed.objective
+        < candidate[4] / n_real + candidate[5] / n_fake - 1e-12
+    )
+    optimal = termination_reason == "optimal"
+    if use_seed:
+        assert grid_seed is not None
+        gap = None
+        if best_bound is not None:
+            gap = max(0.0, (grid_seed.objective - best_bound)
+                      / max(abs(grid_seed.objective), 1e-12))
         return FusionResult(
             dataset=dataset,
             alpha_xception=grid_seed.alpha_xception,
@@ -499,49 +686,26 @@ def solve_parallel_fusion(
             far=grid_seed.far,
             frr=grid_seed.frr,
             objective=grid_seed.objective,
-            optimal=False,
-            solver_status=int(solution.status),
-            solver_message=f"{solution.message} Using validated grid seed.",
+            optimal=optimal and gap is not None and gap <= 1e-9,
+            solver_status=status,
+            solver_message=f"{message}. Using validated grid seed.",
             best_bound=best_bound,
-            mip_gap=fallback_gap,
-            mip_node_count=None if raw_node_count is None else int(raw_node_count),
+            mip_gap=gap,
+            mip_node_count=node_count,
             termination_reason=termination_reason,
             solution_source="grid_seed",
             grid_start_objective=grid_seed.objective,
+            **extra,
         )
 
-    weights = np.asarray(solution.x[:3], dtype=float)
-    raw_predictions = np.asarray(
-        solution.x[prediction_start:objective_offset_index], dtype=float
-    )
-    predictions = np.rint(raw_predictions).astype(np.int8)
-    if np.max(np.abs(raw_predictions - predictions)) > 1e-5:
-        raise MilpSolveError("The MILP returned non-integral prediction variables")
-    if abs(float(weights.sum()) - 1.0) > 1e-6:
-        raise MilpSolveError(f"Detector weights do not sum to 1: {weights}")
-
-    fusion_scores = scores @ weights
-    # Choose the midpoint of the feasible threshold interval. This preserves
-    # every e_j while keeping Real samples at least epsilon below beta.
-    beta = _stable_threshold(fusion_scores, predictions, epsilon)
-    threshold_predictions = (fusion_scores >= beta).astype(np.int8)
-    if not np.array_equal(predictions, threshold_predictions):
-        mismatch_count = int(np.count_nonzero(predictions != threshold_predictions))
-        raise MilpSolveError(
-            f"MILP predictions disagree with q >= beta for {mismatch_count} samples"
-        )
-
-    tolerance = feasibility_tolerance * 2.0
-    if np.any(fusion_scores[predictions == 1] < beta - tolerance):
-        raise MilpSolveError("A Fake prediction violates q_j >= beta")
-    if np.any(fusion_scores[predictions == 0] > beta - epsilon + tolerance):
-        raise MilpSolveError("A Real prediction violates q_j <= beta - epsilon")
-
-    false_accepts = int(np.count_nonzero((labels == 0) & (predictions == 1)))
-    false_rejections = int(np.count_nonzero((labels == 1) & (predictions == 0)))
+    assert candidate is not None
+    weights, beta, predictions, fusion_scores, false_accepts, false_rejections = candidate
     far = false_accepts / n_real
     frr = false_rejections / n_fake
-
+    objective = far + frr
+    gap = None
+    if best_bound is not None:
+        gap = max(0.0, (objective - best_bound) / max(abs(objective), 1e-12))
     return FusionResult(
         dataset=dataset,
         alpha_xception=float(weights[0]),
@@ -556,16 +720,15 @@ def solve_parallel_fusion(
         n_fake=n_fake,
         far=far,
         frr=frr,
-        objective=far + frr,
-        optimal=bool(solution.success),
-        solver_status=int(solution.status),
-        solver_message=str(solution.message),
+        objective=objective,
+        optimal=optimal,
+        solver_status=status,
+        solver_message=message,
         best_bound=best_bound,
-        mip_gap=None if raw_gap is None else float(raw_gap),
-        mip_node_count=None if raw_node_count is None else int(raw_node_count),
+        mip_gap=gap,
+        mip_node_count=node_count,
         termination_reason=termination_reason,
         solution_source="milp",
-        grid_start_objective=(
-            None if grid_seed is None else grid_seed.objective
-        ),
+        grid_start_objective=None if grid_seed is None else grid_seed.objective,
+        **extra,
     )

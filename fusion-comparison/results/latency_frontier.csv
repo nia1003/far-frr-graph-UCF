@@ -1,0 +1,247 @@
+test_set,architecture,latency_ms,min_far_plus_frr
+FaceForensics++,cascade,114.7,0.1
+FaceForensics++,cascade,119.517,0.0946429
+FaceForensics++,cascade,121.123,0.0767857
+FaceForensics++,cascade,125.941,0.0678571
+FaceForensics++,cascade,128.51,0.0642857
+FaceForensics++,cascade,129.794,0.0625
+FaceForensics++,cascade,131.4,0.0607143
+FaceForensics++,cascade,135.254,0.0589286
+FaceForensics++,cascade,136.539,0.0571429
+FaceForensics++,cascade,138.144,0.0553571
+FaceForensics++,cascade,142.454,0.0535714
+FaceForensics++,cascade,144.06,0.0517857
+FaceForensics++,cascade,152.932,0.05
+FaceForensics++,parallel (parallel run),114.7,0.0928571
+FaceForensics++,parallel (parallel run),224.81,0.0482143
+FaceForensics++,parallel (sequential run),114.7,0.0928571
+FaceForensics++,parallel (sequential run),224.81,0.0660714
+FaceForensics++,parallel (sequential run),339.51,0.0482143
+Celeb-DF-v2,cascade,158.79,0.481428
+Celeb-DF-v2,cascade,166.85,0.467978
+Celeb-DF-v2,cascade,170.386,0.464838
+Celeb-DF-v2,cascade,175.127,0.459683
+Celeb-DF-v2,cascade,179.725,0.451388
+Celeb-DF-v2,cascade,200.39,0.448447
+Celeb-DF-v2,cascade,205.556,0.445506
+Celeb-DF-v2,cascade,223.867,0.44425
+Celeb-DF-v2,cascade,228.465,0.435955
+Celeb-DF-v2,cascade,342.124,0.430073
+Celeb-DF-v2,cascade,419.791,0.427396
+Celeb-DF-v2,cascade,451.185,0.420456
+Celeb-DF-v2,cascade,466.116,0.40922
+Celeb-DF-v2,cascade,533.278,0.408956
+Celeb-DF-v2,cascade,555.386,0.406543
+Celeb-DF-v2,cascade,605.606,0.399339
+Celeb-DF-v2,cascade,631.438,0.39425
+Celeb-DF-v2,cascade,657.269,0.388367
+Celeb-DF-v2,cascade,677.935,0.382485
+Celeb-DF-v2,cascade,849.2,0.381097
+Celeb-DF-v2,cascade,980.205,0.380833
+Celeb-DF-v2,cascade,988.294,0.366391
+Celeb-DF-v2,cascade,995.038,0.363748
+Celeb-DF-v2,cascade,996.877,0.36345
+Celeb-DF-v2,cascade,997.184,0.354924
+Celeb-DF-v2,cascade,1146.79,0.348513
+Celeb-DF-v2,cascade,1153.84,0.343688
+Celeb-DF-v2,cascade,1226.74,0.340218
+Celeb-DF-v2,cascade,1234.4,0.335393
+Celeb-DF-v2,parallel (parallel run),158.79,0.481428
+Celeb-DF-v2,parallel (parallel run),166.85,0.454329
+Celeb-DF-v2,parallel (parallel run),2676.15,0.354891
+Celeb-DF-v2,parallel (sequential run),158.79,0.481428
+Celeb-DF-v2,parallel (sequential run),166.85,0.465565
+Celeb-DF-v2,parallel (sequential run),325.64,0.454329
+Celeb-DF-v2,parallel (sequential run),2834.94,0.377925
+Celeb-DF-v2,parallel (sequential run),2843,0.363979
+Celeb-DF-v2,parallel (sequential run),3001.79,0.354891
+DFDC,cascade,106.22,0.662996
+DFDC,cascade,115.262,0.656778
+DFDC,cascade,115.77,0.656153
+DFDC,cascade,116.935,0.654412
+DFDC,cascade,119.966,0.654011
+DFDC,cascade,121.364,0.653592
+DFDC,cascade,122.297,0.653147
+DFDC,cascade,122.763,0.651971
+DFDC,cascade,123.686,0.64605
+DFDC,cascade,125.939,0.645641
+DFDC,cascade,128.037,0.645631
+DFDC,cascade,130.29,0.643957
+DFDC,cascade,132.466,0.643551
+DFDC,cascade,132.728,0.641908
+DFDC,cascade,133.236,0.641849
+DFDC,cascade,136.577,0.638691
+DFDC,cascade,140.109,0.638421
+DFDC,cascade,140.462,0.637965
+DFDC,cascade,141.951,0.634146
+DFDC,cascade,146.613,0.63053
+DFDC,cascade,150.992,0.629884
+DFDC,cascade,152.751,0.629381
+DFDC,cascade,156.841,0.628194
+DFDC,cascade,156.975,0.625849
+DFDC,cascade,159.961,0.625193
+DFDC,cascade,163.968,0.623003
+DFDC,cascade,166.877,0.620019
+DFDC,cascade,175.035,0.61801
+DFDC,cascade,184.204,0.617026
+DFDC,cascade,194.131,0.61577
+DFDC,cascade,200.315,0.614751
+DFDC,cascade,200.699,0.614457
+DFDC,cascade,202.076,0.614079
+DFDC,cascade,205.553,0.612897
+DFDC,cascade,214.011,0.612368
+DFDC,cascade,214.753,0.612318
+DFDC,cascade,215.193,0.611999
+DFDC,cascade,216.051,0.611567
+DFDC,cascade,216.089,0.609478
+DFDC,cascade,217.067,0.608891
+DFDC,cascade,232.931,0.605577
+DFDC,cascade,235.776,0.604535
+DFDC,cascade,251.773,0.60435
+DFDC,cascade,253.074,0.603167
+DFDC,cascade,256.086,0.600257
+DFDC,cascade,270.494,0.599464
+DFDC,cascade,272.703,0.598449
+DFDC,cascade,277.783,0.59633
+DFDC,cascade,287.359,0.59624
+DFDC,cascade,293.094,0.595928
+DFDC,cascade,306.28,0.595831
+DFDC,cascade,306.299,0.59485
+DFDC,cascade,313.28,0.593933
+DFDC,cascade,318.71,0.5927
+DFDC,cascade,326.319,0.591626
+DFDC,cascade,330.416,0.590993
+DFDC,cascade,330.671,0.589596
+DFDC,cascade,338.845,0.588495
+DFDC,cascade,343.843,0.587356
+DFDC,cascade,355.981,0.585641
+DFDC,cascade,359.644,0.585102
+DFDC,cascade,369.492,0.584657
+DFDC,cascade,385.902,0.582404
+DFDC,cascade,431.968,0.582402
+DFDC,parallel (parallel run),106.22,0.660324
+DFDC,parallel (parallel run),170.81,0.623991
+DFDC,parallel (parallel run),365.5,0.593984
+DFDC,parallel (sequential run),106.22,0.660324
+DFDC,parallel (sequential run),170.81,0.626969
+DFDC,parallel (sequential run),277.03,0.623991
+DFDC,parallel (sequential run),471.72,0.607924
+DFDC,parallel (sequential run),536.31,0.596479
+DFDC,parallel (sequential run),642.53,0.593984
+balanced_pooled,cascade,110.225,0.633498
+balanced_pooled,cascade,118.867,0.62932
+balanced_pooled,cascade,119.209,0.622104
+balanced_pooled,cascade,123.267,0.620585
+balanced_pooled,cascade,125.025,0.619445
+balanced_pooled,cascade,126.446,0.618686
+balanced_pooled,cascade,127.851,0.617926
+balanced_pooled,cascade,135.43,0.608431
+balanced_pooled,cascade,143.038,0.608052
+balanced_pooled,cascade,144.073,0.603874
+balanced_pooled,cascade,153.386,0.599696
+balanced_pooled,cascade,153.714,0.598937
+balanced_pooled,cascade,160.035,0.598557
+balanced_pooled,cascade,161.345,0.597797
+balanced_pooled,cascade,162.356,0.594759
+balanced_pooled,cascade,171.329,0.59172
+balanced_pooled,cascade,184.264,0.589821
+balanced_pooled,cascade,198.172,0.589062
+balanced_pooled,cascade,202.286,0.588302
+balanced_pooled,cascade,203.574,0.587923
+balanced_pooled,cascade,207.651,0.587543
+balanced_pooled,cascade,209.428,0.587163
+balanced_pooled,cascade,210.979,0.586783
+balanced_pooled,cascade,211.225,0.586403
+balanced_pooled,cascade,213.284,0.586024
+balanced_pooled,cascade,213.7,0.585644
+balanced_pooled,cascade,213.908,0.585264
+balanced_pooled,cascade,221.902,0.584884
+balanced_pooled,cascade,222.518,0.584504
+balanced_pooled,cascade,223.143,0.584125
+balanced_pooled,cascade,225.353,0.583745
+balanced_pooled,cascade,226.174,0.583365
+balanced_pooled,cascade,226.383,0.582985
+balanced_pooled,cascade,233.973,0.582605
+balanced_pooled,cascade,234.587,0.582226
+balanced_pooled,cascade,235.617,0.581846
+balanced_pooled,cascade,240.021,0.581466
+balanced_pooled,cascade,244.896,0.580706
+balanced_pooled,cascade,247.664,0.579947
+balanced_pooled,cascade,249.168,0.579187
+balanced_pooled,cascade,256.899,0.578807
+balanced_pooled,cascade,258.402,0.578048
+balanced_pooled,cascade,272.056,0.577668
+balanced_pooled,cascade,274.691,0.577288
+balanced_pooled,cascade,277.553,0.576908
+balanced_pooled,cascade,284.076,0.576529
+balanced_pooled,cascade,292.099,0.57349
+balanced_pooled,cascade,293.853,0.573111
+balanced_pooled,cascade,296.004,0.570832
+balanced_pooled,cascade,300.235,0.570452
+balanced_pooled,cascade,312.111,0.569692
+balanced_pooled,cascade,314.238,0.569313
+balanced_pooled,cascade,316.854,0.568933
+balanced_pooled,cascade,320.92,0.568553
+balanced_pooled,cascade,325.562,0.567414
+balanced_pooled,cascade,335.73,0.567034
+balanced_pooled,cascade,338.202,0.566654
+balanced_pooled,cascade,339.847,0.566274
+balanced_pooled,cascade,341.373,0.565515
+balanced_pooled,cascade,362.27,0.564755
+balanced_pooled,cascade,389.978,0.562856
+balanced_pooled,cascade,395.287,0.562476
+balanced_pooled,cascade,408.827,0.560197
+balanced_pooled,cascade,430.712,0.559058
+balanced_pooled,cascade,434.154,0.558299
+balanced_pooled,cascade,450.998,0.557159
+balanced_pooled,cascade,476.324,0.55526
+balanced_pooled,parallel (parallel run),110.225,0.630839
+balanced_pooled,parallel (parallel run),173.414,0.593619
+balanced_pooled,parallel (parallel run),557.313,0.566654
+balanced_pooled,parallel (sequential run),110.225,0.630839
+balanced_pooled,parallel (sequential run),173.414,0.597797
+balanced_pooled,parallel (sequential run),283.638,0.593619
+balanced_pooled,parallel (sequential run),667.538,0.589442
+balanced_pooled,parallel (sequential run),730.727,0.570832
+balanced_pooled,parallel (sequential run),840.951,0.566654
+balanced_equal_source,cascade,126.57,0.42381
+balanced_equal_source,cascade,135.2,0.411905
+balanced_equal_source,cascade,142.007,0.409524
+balanced_equal_source,cascade,143.239,0.407143
+balanced_equal_source,cascade,150.046,0.404762
+balanced_equal_source,cascade,166.864,0.402381
+balanced_equal_source,cascade,170.05,0.4
+balanced_equal_source,cascade,185.331,0.397619
+balanced_equal_source,cascade,213.3,0.395238
+balanced_equal_source,cascade,237.563,0.392857
+balanced_equal_source,cascade,252.449,0.390476
+balanced_equal_source,cascade,286.222,0.388095
+balanced_equal_source,cascade,310.477,0.385714
+balanced_equal_source,cascade,325.013,0.383333
+balanced_equal_source,cascade,327.785,0.378571
+balanced_equal_source,cascade,363.563,0.37381
+balanced_equal_source,cascade,367.184,0.371429
+balanced_equal_source,cascade,405.201,0.369048
+balanced_equal_source,cascade,408.822,0.366667
+balanced_equal_source,cascade,463.698,0.364286
+balanced_equal_source,cascade,533.005,0.361905
+balanced_equal_source,cascade,563.438,0.359524
+balanced_equal_source,cascade,612.518,0.357143
+balanced_equal_source,cascade,613.451,0.354762
+balanced_equal_source,cascade,615.229,0.352381
+balanced_equal_source,cascade,675.574,0.35
+balanced_equal_source,cascade,678.342,0.347619
+balanced_equal_source,cascade,678.822,0.345238
+balanced_equal_source,cascade,681.052,0.342857
+balanced_equal_source,cascade,768.708,0.340476
+balanced_equal_source,cascade,896.793,0.338095
+balanced_equal_source,cascade,984.197,0.335714
+balanced_equal_source,parallel (parallel run),126.57,0.419048
+balanced_equal_source,parallel (parallel run),187.49,0.407143
+balanced_equal_source,parallel (parallel run),1358.93,0.354762
+balanced_equal_source,parallel (sequential run),126.57,0.419048
+balanced_equal_source,parallel (sequential run),187.49,0.411905
+balanced_equal_source,parallel (sequential run),314.06,0.407143
+balanced_equal_source,parallel (sequential run),1485.5,0.388095
+balanced_equal_source,parallel (sequential run),1546.42,0.366667
+balanced_equal_source,parallel (sequential run),1672.99,0.354762

@@ -43,7 +43,7 @@ allowed.
 Install the dependencies if necessary:
 
 ```powershell
-python -m pip install -r parallel-fusion/milp/requirements.txt
+python -m pip install -r parallel-fusion/milp/requirements.txt   # numpy, scipy, highspy
 ```
 
 Run all datasets from the project root:
@@ -64,33 +64,45 @@ Useful optional arguments:
 --epsilon 1e-6
 --time-limit SECONDS
 --mip-rel-gap VALUE
+--seed-step 0.01
+--no-seed / --no-tight-big-m / --no-dominance   (ablation)
+--threads N
 --solver-log
 ```
 
-## Start from an exhaustive-search incumbent
+## Solver improvements (HiGHS via `highspy`)
 
-SciPy's `milp` interface does not expose a native `x0`/MIP-start argument. The
-runner can still validate the best grid point and add its objective as a hard
-incumbent cutoff, so branch-and-bound searches only solutions that are at least
-as good as the grid result:
+The solver now calls HiGHS directly through `highspy` instead of
+`scipy.optimize.milp`. Four changes, all on by default:
+
+1. **Real MIP start.** Before solving, `exact_beta_grid_seed` searches the
+   weight simplex in steps of `--seed-step` (default 0.01) and, for each
+   weight vector, finds the best threshold exactly by sorting the fused
+   scores (no beta quantisation). That point is passed to HiGHS with
+   `setSolution()`, so the MILP can never end worse than this grid. The old
+   objective-cutoff row was removed. `--grid-start <csv>` still works and
+   replaces the built-in seed. `--no-seed` disables the start.
+2. **Per-sample Big-M.** On the simplex, `q_j` is always inside
+   `[min_k s_jk, max_k s_jk]`, so `M1_j = 1 - min_k s_jk` and
+   `M2_j = max_k s_jk` are valid and never larger than the old global `M = 1`.
+   Disable with `--no-tight-big-m`.
+3. **Dominance cuts.** If video `a` scores at least as high as video `b` on
+   all three detectors, then `q_a >= q_b` for any non-negative weights, so
+   `e_b = 1` forces `e_a = 1`. The rows `e_a - e_b >= 0` are added for the
+   transitive reduction of the dominance relation (DFDC: 6.48 M dominance
+   pairs reduce to 88,842 rows). Disable with `--no-dominance`.
+4. **Status is always recorded.** `milp_summary.csv` now has `optimal`,
+   `best_bound`, `mip_gap`, `node_count`, `seed_source`, `tight_big_m`,
+   `dominance_cut_count` and `solve_seconds` for every dataset. Running one
+   dataset merges into the existing summary instead of erasing the other
+   rows.
+
+Merging identical score vectors was also considered, but none of the three
+datasets contains duplicate score vectors, so it is not implemented.
 
 ```powershell
-python parallel-fusion/milp/run_milp.py `
-  --grid-start parallel-fusion/exhaustive/results/exhaustive_best_summary.csv `
-  --time-limit 300
+python parallel-fusion/milp/run_milp.py --time-limit 1200
 ```
-
-The alpha values and beta are re-evaluated from the fusion input CSV; the FAR
-and FRR written in the supplied summary are not trusted. If the grid point is
-not feasible under the strict epsilon margin, the run stops with an error. If
-HiGHS does not find a new incumbent within the time limit, the validated grid
-solution is retained in the output with `solution_source=grid_seed`.
-
-With no time limit, HiGHS continues until it proves global optimality. Minimum
-classification-error MILPs can require substantial branch-and-bound time. If a
-time limit is supplied, the CSV still records the best feasible solution, but
-`optimal` is `False` and `mip_gap` reports the remaining proof gap; the program
-does not describe that solution as optimal.
 
 Results are written under `parallel-fusion/milp/milp-results/`:
 

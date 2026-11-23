@@ -11,6 +11,7 @@ from milp_solver import (
     FusionResult,
     FusionSample,
     build_fusion_seed,
+    exact_beta_grid_seed,
     read_fusion_csv,
     solve_parallel_fusion,
 )
@@ -47,6 +48,10 @@ SUMMARY_COLUMNS = [
     "termination_reason",
     "solution_source",
     "grid_start_objective",
+    "seed_source",
+    "tight_big_m",
+    "dominance_cut_count",
+    "solve_seconds",
     "solver_message",
 ]
 
@@ -109,9 +114,39 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=None,
         help=(
-            "Optional exhaustive_best_summary.csv used as a validated incumbent "
-            "objective cutoff."
+            "Optional exhaustive_best_summary.csv whose point is passed to HiGHS "
+            "as the MIP start (overrides the built-in exact-beta grid seed)."
         ),
+    )
+    parser.add_argument(
+        "--seed-step",
+        type=float,
+        default=0.01,
+        help=(
+            "Weight step of the built-in exact-beta grid used as MIP start when "
+            "--grid-start is not given (default: 0.01)."
+        ),
+    )
+    parser.add_argument(
+        "--no-seed",
+        action="store_true",
+        help="Do not give HiGHS any MIP start.",
+    )
+    parser.add_argument(
+        "--no-tight-big-m",
+        action="store_true",
+        help="Use the global M = 1 instead of per-sample Big-M values.",
+    )
+    parser.add_argument(
+        "--no-dominance",
+        action="store_true",
+        help="Do not add dominance cuts e_a >= e_b.",
+    )
+    parser.add_argument(
+        "--threads",
+        type=int,
+        default=None,
+        help="HiGHS thread count.",
     )
     parser.add_argument(
         "--solver-log",
@@ -191,7 +226,7 @@ def prediction_rows(
     return rows
 
 
-def summary_row(result: FusionResult) -> dict[str, object]:
+def summary_row(result: FusionResult, seed_source: str) -> dict[str, object]:
     return {
         "dataset": result.dataset,
         "alpha_xception": format(result.alpha_xception, ".17g"),
@@ -218,6 +253,12 @@ def summary_row(result: FusionResult) -> dict[str, object]:
             ""
             if result.grid_start_objective is None
             else format(result.grid_start_objective, ".17g")
+        ),
+        "seed_source": seed_source,
+        "tight_big_m": result.tight_big_m,
+        "dominance_cut_count": result.dominance_cut_count,
+        "solve_seconds": (
+            "" if result.solve_seconds is None else f"{result.solve_seconds:.1f}"
         ),
         "solver_message": result.solver_message,
     }
@@ -272,7 +313,9 @@ def main() -> None:
             )
 
         grid_seed = None
+        seed_source = "none"
         if grid_rows is not None:
+            seed_source = f"grid_start:{args.grid_start.name}"
             if dataset not in grid_rows:
                 raise ValueError(
                     f"{args.grid_start} does not contain dataset {dataset!r}"
@@ -291,9 +334,16 @@ def main() -> None:
                 raise ValueError(
                     f"Invalid grid-start row for {dataset}: {error}"
                 ) from error
+        elif not args.no_seed:
+            seed_source = f"exact_beta_grid:{args.seed_step:g}"
+            grid_seed = exact_beta_grid_seed(
+                samples, step=args.seed_step, epsilon=args.epsilon
+            )
+        if grid_seed is not None:
             print(
-                f"Grid incumbent for {dataset}: "
-                f"FAR+FRR={grid_seed.objective:.10f}"
+                f"MIP start for {dataset} ({seed_source}): "
+                f"FAR+FRR={grid_seed.objective:.10f}",
+                flush=True,
             )
 
         result = solve_parallel_fusion(
@@ -303,6 +353,9 @@ def main() -> None:
             mip_rel_gap=args.mip_rel_gap,
             display_solver_log=args.solver_log,
             grid_seed=grid_seed,
+            tight_big_m=not args.no_tight_big_m,
+            dominance_cuts=not args.no_dominance,
+            threads=args.threads,
         )
         prediction_path = args.output_dir / f"{dataset}_milp_predictions.csv"
         atomic_write_csv(
@@ -310,10 +363,23 @@ def main() -> None:
             PREDICTION_COLUMNS,
             prediction_rows(samples, result),
         )
-        summary_rows.append(summary_row(result))
+        summary_rows.append(summary_row(result, seed_source))
         print_result(result)
 
+    # Merge with rows of datasets that were not re-run, so a single-dataset
+    # run no longer erases the other datasets from the summary.
     summary_path = args.output_dir / "milp_summary.csv"
+    rerun = {row["dataset"] for row in summary_rows}
+    kept: list[dict[str, object]] = []
+    if summary_path.is_file():
+        with summary_path.open("r", encoding="utf-8-sig", newline="") as file:
+            for row in csv.DictReader(file):
+                if row.get("dataset") not in rerun:
+                    kept.append({column: row.get(column, "") for column in SUMMARY_COLUMNS})
+    order = {name: index for index, name in enumerate(DATASET_FILES)}
+    summary_rows = sorted(
+        kept + summary_rows, key=lambda row: order.get(str(row["dataset"]), 99)
+    )
     atomic_write_csv(summary_path, SUMMARY_COLUMNS, summary_rows)
     print(f"Summary: {summary_path}")
 

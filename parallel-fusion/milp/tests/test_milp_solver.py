@@ -14,6 +14,9 @@ from milp_solver import (  # noqa: E402
     FusionSample,
     _build_indicator_constraints,
     build_fusion_seed,
+    dominance_pairs,
+    exact_beta_grid_seed,
+    per_sample_big_m,
     solve_parallel_fusion,
 )
 
@@ -133,7 +136,7 @@ class ParallelFusionMilpTests(unittest.TestCase):
         )
         self.assertTrue(all(result.fusion_scores[result.predictions == 1] >= result.beta))
 
-    def test_grid_seed_adds_incumbent_cutoff(self) -> None:
+    def test_grid_seed_is_used_as_mip_start(self) -> None:
         samples = self.make_samples()
         seed = build_fusion_seed(
             samples,
@@ -165,6 +168,56 @@ class ParallelFusionMilpTests(unittest.TestCase):
                 beta=0.5,
                 epsilon=1e-6,
             )
+
+
+    def test_tight_big_m_keeps_boundary_rule(self) -> None:
+        epsilon = 1e-6
+        scores = np.array([[0.2, 0.6, 0.4]])
+        big_m = per_sample_big_m(scores, epsilon)
+        matrix, lower, upper = _build_indicator_constraints(
+            scores, epsilon, big_m=big_m
+        )
+        for beta in (0.0, 0.3, 0.6, 1.0):
+            for weights in ([1, 0, 0], [0, 1, 0], [0.3, 0.3, 0.4]):
+                q = float(scores[0] @ np.array(weights))
+                for prediction in (0, 1):
+                    x = np.array([*weights, beta, prediction, 1.0], dtype=float)
+                    values = matrix @ x
+                    feasible = bool(
+                        np.all(values >= lower - 1e-12)
+                        and np.all(values <= upper + 1e-12)
+                    )
+                    expected = (q >= beta) if prediction == 1 else (
+                        q <= beta - epsilon
+                    )
+                    self.assertEqual(feasible, expected, (beta, weights, prediction))
+
+    def test_dominance_pairs_are_reduced_and_valid(self) -> None:
+        scores = np.array(
+            [[0.9, 0.9, 0.9], [0.5, 0.5, 0.5], [0.1, 0.1, 0.1], [0.9, 0.0, 0.5]]
+        )
+        pairs = {tuple(map(int, pair)) for pair in dominance_pairs(scores)}
+        self.assertIn((0, 1), pairs)
+        self.assertIn((1, 2), pairs)
+        self.assertNotIn((0, 2), pairs)  # implied by 0>=1>=2
+        for a, b in pairs:
+            self.assertTrue(np.all(scores[a] >= scores[b]))
+
+    def test_improvements_do_not_change_optimum(self) -> None:
+        rng = np.random.default_rng(3)
+        samples = []
+        for index in range(60):
+            label = int(index % 2)
+            base = rng.uniform(0.0, 1.0, 3) * 0.7 + 0.3 * label
+            base = np.clip(base, 0.0, 1.0)
+            samples.append(FusionSample("toy", str(index), label, *map(float, base), index))
+        plain = solve_parallel_fusion(samples, tight_big_m=False, dominance_cuts=False)
+        improved = solve_parallel_fusion(
+            samples, grid_seed=exact_beta_grid_seed(samples, step=0.1)
+        )
+        self.assertTrue(plain.optimal)
+        self.assertTrue(improved.optimal)
+        self.assertAlmostEqual(plain.objective, improved.objective, places=9)
 
 
 if __name__ == "__main__":
