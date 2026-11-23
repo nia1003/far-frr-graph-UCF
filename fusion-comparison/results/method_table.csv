@@ -5,7 +5,7 @@ Celeb-DF-v2,Average Score,0.211765,0.191011,0.402776,2676.15,3001.79,"equal weig
 Celeb-DF-v2,Relative Majority,0.223529,0.207865,0.431395,2676.15,3001.79,2 of 3 detectors say fake
 Celeb-DF-v2,"Cascade (5% grid, per-video search)",0.15,0.185393,0.335393,1234.4,1234.4,"ucf>sbi>xception | ucf:L=0.15,H=0.55; sbi:L=0.30,H=0.70; xception:T=0.55"
 Celeb-DF-v2,(old table latency = mean of 3 detectors),,,,1000.6,1000.6,
-DFDC,MILP (optimised on this dataset),0.395144,0.196976,0.592121,365.5,642.53,"time limit, gap 9.1%"
+DFDC,MILP (optimised on this dataset),0.395144,0.196976,0.592121,365.5,642.53,"time limit, gap 7.2%"
 DFDC,"MILP (FF++ parameters, cross-dataset)",0.632482,0.0915767,0.724059,365.5,642.53,weights/threshold learned on FF++
 DFDC,Average Score,0.494768,0.149892,0.64466,365.5,642.53,"equal weights, threshold 0.5"
 DFDC,Relative Majority,0.435747,0.207775,0.643523,365.5,642.53,2 of 3 detectors say fake
